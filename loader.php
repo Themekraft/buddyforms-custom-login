@@ -44,7 +44,7 @@ function buddyforms_custom_login_init() {
 
 add_filter( 'buddyforms_login_form_redirect_url', 'buddyforms_custom_login_redirect_url', 10, 1 );
 function buddyforms_custom_login_redirect_url( $redirect ) {
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) && $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? '' : $custom_login_settings['display_login_form'];
 	$caller                = ! empty( $_REQUEST['caller'] ) ? sanitize_key( $_REQUEST['caller'] ) : '';
@@ -67,7 +67,7 @@ function buddyforms_custom_login_page() {
 		return;
 	}
 
-	$custom_login_settings       = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings       = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page                  = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 	$register_page               = empty( $custom_login_settings['register_page'] ) ? 'none' : $custom_login_settings['register_page'];
 	$redirect_logged_off_user    = empty( $custom_login_settings['redirect_logged_off_user'] ) ? 'No' : $custom_login_settings['redirect_logged_off_user'];
@@ -139,7 +139,7 @@ add_action( 'init', 'buddyforms_custom_login_page_init' );
 function buddyforms_custom_login_page_init() {
 	global $pagenow;
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 
 	if ( empty( $login_page ) || $login_page == 'default' || $login_page == 'none' ) {
@@ -175,7 +175,7 @@ function buddyforms_custom_login_page_init() {
 add_filter( 'login_form_bottom', 'buddyforms_site_register_link', 9999 );
 function buddyforms_site_register_link( $wp_login_form ) {
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$register_page         = empty( $custom_login_settings['register_page'] ) ? 'none' : $custom_login_settings['register_page'];
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 
@@ -199,7 +199,7 @@ function buddyforms_site_register_link( $wp_login_form ) {
 add_filter( 'the_content', 'buddyforms_custom_login_the_content' );
 function buddyforms_custom_login_the_content( $content ) {
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? '' : $custom_login_settings['login_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? 'overwrite' : $custom_login_settings['display_login_form'];
 	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) ? '' : $custom_login_settings['redirect_page'];
@@ -232,7 +232,7 @@ function buddyforms_custom_login_the_content( $content ) {
 add_filter( 'buddyforms_loggin_settings', 'buddyforms_custom_login_remember_me_as_default' );
 function buddyforms_custom_login_remember_me_as_default( $settings ) {
 
-	$bf_custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$bf_custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page               = ! empty( $bf_custom_login_settings['login_page'] ) ? (int) $bf_custom_login_settings['login_page'] : '';
 	$remember_me_as_default   = ! empty( $bf_custom_login_settings['remember_me_as_default'] ) ? true : false;
 

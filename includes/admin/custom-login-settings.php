@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_filter( 'buddyforms_admin_tabs', 'buddyforms_custom_login_admin_tab', 1, 1 );
 function buddyforms_custom_login_admin_tab( $tabs ) {
 

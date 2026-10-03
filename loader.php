@@ -1,14 +1,19 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin Name: BuddyForms Custom Login Page
  * Plugin URI: https://themekraft.com/products/custom-login/
  * Description: Select a Custom Login Page
  * Version: 1.1.14
+ * Requires at least: 5.9
+ * Requires PHP: 7.4
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/
  * License: GPLv2 or later
- * Network: false
  * Text Domain: buddyforms-custom-login-page
  * Svn: buddyforms-custom-login-page
  *

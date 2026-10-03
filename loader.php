@@ -9,7 +9,7 @@
  * Author URI: https://themekraft.com/
  * License: GPLv2 or later
  * Network: false
- * Text Domain: buddyforms
+ * Text Domain: buddyforms-custom-login-page
  * Svn: buddyforms-custom-login-page
  *
  * ****************************************************************************
@@ -184,9 +184,9 @@ function buddyforms_site_register_link( $wp_login_form ) {
 		$url = get_permalink( $register_page );
 	}
 
-	$wp_login_form     = '<a href="' . $url . '">' . __( 'Register', 'buddyforms' ) . '</a> ';
+	$wp_login_form     = '<a href="' . $url . '">' . __( 'Register', 'buddyforms-custom-login-page' ) . '</a> ';
 	$lost_password_url = apply_filters( 'buddyforms_custom_login_lost_password_url', wp_lostpassword_url() );
-	$wp_login_form    .= '<a href="' . esc_url( $lost_password_url ) . '">' . __( 'Lost Password?', 'buddyforms' ) . '</a> ';
+	$wp_login_form    .= '<a href="' . esc_url( $lost_password_url ) . '">' . __( 'Lost Password?', 'buddyforms-custom-login-page' ) . '</a> ';
 
 	return $wp_login_form;
 }

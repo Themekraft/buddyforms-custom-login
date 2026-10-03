@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_filter( 'buddyforms_admin_tabs', 'buddyforms_custom_login_admin_tab', 1, 1 );
 function buddyforms_custom_login_admin_tab( $tabs ) {
 
@@ -96,8 +100,8 @@ function buddyforms_custom_login_settings_page_tab( $tab ) {
 								$register_page = empty( $custom_login_settings['register_page'] ) ? '' : $custom_login_settings['register_page'];
 								if ( isset( $pages ) && is_array( $pages ) ) {
 									echo '<select name="buddyforms_custom_login_settings[register_page]" id="buddyforms_registration_form">';
-									echo '<option value="default">' . esc_html__( 'WordPress Default', 'buddyforms' ) . '</option>';
-									echo '<option value="none">' . esc_html__( 'None', 'buddyforms' ) . '</option>';
+									echo '<option value="default">' . esc_html__( 'WordPress Default', 'buddyforms-custom-login-page' ) . '</option>';
+									echo '<option value="none">' . esc_html__( 'None', 'buddyforms-custom-login-page' ) . '</option>';
 									foreach ( $pages as $page_id => $page_name ) {
 										if ( ! empty( $page_name ) ) {
 											echo '<option ' . selected( $register_page, $page_id ) . 'value="' . esc_attr( $page_id ) . '">' . esc_html( $page_name ) . '</option>';
@@ -116,7 +120,7 @@ function buddyforms_custom_login_settings_page_tab( $tab ) {
 								<?php
 								$redirect_page = empty( $custom_login_settings['redirect_page'] ) ? '' : $custom_login_settings['redirect_page'];
 								if ( function_exists( 'buddyforms_get_all_pages_dropdown' ) ) {
-									$pages_dropdown = buddyforms_get_all_pages_dropdown( 'buddyforms_custom_login_settings[redirect_page]', $redirect_page, 'buddyforms_custom_login_redirect_page', __( 'WordPress Default', 'buddyforms' ), 'default' );
+									$pages_dropdown = buddyforms_get_all_pages_dropdown( 'buddyforms_custom_login_settings[redirect_page]', $redirect_page, 'buddyforms_custom_login_redirect_page', __( 'WordPress Default', 'buddyforms-custom-login-page' ), 'default' );
 									if ( ! empty( $pages_dropdown ) ) {
 										echo wp_kses( $pages_dropdown, $allowed );
 									}

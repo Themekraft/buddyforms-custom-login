@@ -19,7 +19,7 @@ function buddyforms_custom_login_settings_page_tab( $tab ) {
 	if ( $tab != 'custom_login' ) {
 		return $tab;
 	}
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 
 	$pages = buddyforms_get_all_pages( 'id', 'settings' );
 	$allowed = array(

@@ -4,7 +4,7 @@ Tags: custom login, login form, restrict content, private network, members only
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.15-beta.2
+Stable tag: 1.1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,12 @@ Head to the 'BuddyForms' menu item in your admin sidebar and go to the Settings 
 
 
 == Changelog ==
+= 1.1.15 - 03 Oct 2026 =
+* Fixed a fatal error on every page with PHP 8 when the plugin settings had never been saved.
+* Escaped the registration link URL.
+* Fixed translations: every string now uses the plugin's own text domain.
+* Requires WordPress 5.9 and PHP 7.4. Tested up to WordPress 7.1.
+
 = 1.1.14 - 26 Dec 2023 =
 * Updated Freemius SDK.
 * Improved plugin description.

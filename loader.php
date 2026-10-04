@@ -1,18 +1,23 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin Name: BuddyForms Custom Login Page
  * Plugin URI: https://themekraft.com/products/custom-login/
  * Description: Select a Custom Login Page
- * Version: 1.1.5
+ * Version: 1.1.15
+ * Requires at least: 5.9
+ * Requires PHP: 7.4
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/
  * License: GPLv2 or later
- * Network: false
- * Text Domain: buddyforms
+ * Text Domain: buddyforms-custom-login-page
  * Svn: buddyforms-custom-login-page
  *
- *****************************************************************************
+ * ****************************************************************************
  *
  * This script is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,23 +33,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- ****************************************************************************
+ * ***************************************************************************
  */
 
 // BuddyForms Members init
 add_action( 'init', 'buddyforms_custom_login_init' );
 function buddyforms_custom_login_init() {
-	require( dirname( __FILE__ ) . '/includes/admin/custom-login-settings.php' );
+	require dirname( __FILE__ ) . '/includes/admin/custom-login-settings.php';
 }
 
 add_filter( 'buddyforms_login_form_redirect_url', 'buddyforms_custom_login_redirect_url', 10, 1 );
 function buddyforms_custom_login_redirect_url( $redirect ) {
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) && $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? '' : $custom_login_settings['display_login_form'];
 	$caller                = ! empty( $_REQUEST['caller'] ) ? sanitize_key( $_REQUEST['caller'] ) : '';
-	$caller_redirect	   = empty( $caller ) || $caller==='direct';
-	if ( ! empty( $redirect_page ) && ! empty( $display_login_form ) && $caller_redirect) {
+	$caller_redirect       = empty( $caller ) || $caller === 'direct';
+	if ( ! empty( $redirect_page ) && ! empty( $display_login_form ) && $caller_redirect ) {
 		$redirect_page_url = get_permalink( $redirect_page );
 		if ( ! empty( $redirect_page_url ) ) {
 			return $redirect_page_url;
@@ -62,7 +67,7 @@ function buddyforms_custom_login_page() {
 		return;
 	}
 
-	$custom_login_settings       = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings       = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page                  = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 	$register_page               = empty( $custom_login_settings['register_page'] ) ? 'none' : $custom_login_settings['register_page'];
 	$redirect_logged_off_user    = empty( $custom_login_settings['redirect_logged_off_user'] ) ? 'No' : $custom_login_settings['redirect_logged_off_user'];
@@ -75,19 +80,27 @@ function buddyforms_custom_login_page() {
 		$new_login_page_url = get_permalink( $login_page );
 	}
 
+	if ( array_key_exists( 'use_custom_redirect_url', $custom_login_settings ) ) {
+		if ( $redirect_logged_off_user == 'Yes' && ! empty( $custom_login_settings['set_custom_redirect_url'] ) ) {
+			$new_login_page_url = $custom_login_settings['set_custom_redirect_url'];
+		}
+	}
+
 	if ( ! is_user_logged_in() && $redirect_logged_off_user != 'No' ) {
 
-
-		if ( in_array( get_the_ID(), $public_accessible_pages ) ) {
+		if ( ! get_the_ID() || in_array( get_the_ID(), $public_accessible_pages ) ) {
 			return;
 		}
-
 
 		if ( in_array( get_post_type(), $public_accessible_post_type ) ) {
 			return;
 		}
 
 		if ( is_page( $public_accessible_pages ) ) {
+			return;
+		}
+
+		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), 'activate' ) !== false ) {
 			return;
 		}
 
@@ -107,7 +120,7 @@ function buddyforms_custom_login_page() {
 			return;
 		}
 
-		if ( $pagenow == "wp-login.php" && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+		if ( $pagenow == 'wp-login.php' && isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 			if ( ! ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' || isset( $_GET['action'] ) && $_GET['action'] == 'rp' ) ) {
 				if ( ! ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] == 'confirm' ) ) {
 					wp_redirect( $new_login_page_url );
@@ -120,14 +133,13 @@ function buddyforms_custom_login_page() {
 		exit;
 	}
 
-
 }
 
 add_action( 'init', 'buddyforms_custom_login_page_init' );
 function buddyforms_custom_login_page_init() {
 	global $pagenow;
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 
 	if ( empty( $login_page ) || $login_page == 'default' || $login_page == 'none' ) {
@@ -145,9 +157,11 @@ function buddyforms_custom_login_page_init() {
 	if ( isset( $_GET['action'] ) && $_GET['action'] == 'switch_to_olduser' ) {
 		return;
 	}
+	if ( isset( $_GET['action'] ) && $_GET['action'] == 'confirm_admin_email' ) {
+		return;
+	}
 
-
-	if ( $pagenow == "wp-login.php" && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+	if ( $pagenow == 'wp-login.php' && isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 		if ( ! ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' || isset( $_GET['action'] ) && $_GET['action'] == 'rp' ) ) {
 			if ( ! ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] == 'confirm' ) ) {
 				wp_redirect( $new_login_page_url );
@@ -161,7 +175,7 @@ function buddyforms_custom_login_page_init() {
 add_filter( 'login_form_bottom', 'buddyforms_site_register_link', 9999 );
 function buddyforms_site_register_link( $wp_login_form ) {
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$register_page         = empty( $custom_login_settings['register_page'] ) ? 'none' : $custom_login_settings['register_page'];
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? 'none' : $custom_login_settings['login_page'];
 
@@ -175,9 +189,9 @@ function buddyforms_site_register_link( $wp_login_form ) {
 		$url = get_permalink( $register_page );
 	}
 
-	$wp_login_form     = '<a href="' . $url . '">' . __( 'Register', 'buddyforms' ) . '</a> ';
+	$wp_login_form     = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Register', 'buddyforms-custom-login-page' ) . '</a> ';
 	$lost_password_url = apply_filters( 'buddyforms_custom_login_lost_password_url', wp_lostpassword_url() );
-	$wp_login_form     .= '<a href="' . esc_url( $lost_password_url ) . '">' . __( 'Lost Password?', 'buddyforms' ) . '</a> ';
+	$wp_login_form    .= '<a href="' . esc_url( $lost_password_url ) . '">' . esc_html__( 'Lost Password?', 'buddyforms-custom-login-page' ) . '</a> ';
 
 	return $wp_login_form;
 }
@@ -185,7 +199,7 @@ function buddyforms_site_register_link( $wp_login_form ) {
 add_filter( 'the_content', 'buddyforms_custom_login_the_content' );
 function buddyforms_custom_login_the_content( $content ) {
 
-	$custom_login_settings = get_option( 'buddyforms_custom_login_settings' );
+	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$login_page            = empty( $custom_login_settings['login_page'] ) ? '' : $custom_login_settings['login_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? 'overwrite' : $custom_login_settings['display_login_form'];
 	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) ? '' : $custom_login_settings['redirect_page'];
@@ -215,6 +229,20 @@ function buddyforms_custom_login_the_content( $content ) {
 
 }
 
+add_filter( 'buddyforms_loggin_settings', 'buddyforms_custom_login_remember_me_as_default' );
+function buddyforms_custom_login_remember_me_as_default( $settings ) {
+
+	$bf_custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
+	$login_page               = ! empty( $bf_custom_login_settings['login_page'] ) ? (int) $bf_custom_login_settings['login_page'] : '';
+	$remember_me_as_default   = ! empty( $bf_custom_login_settings['remember_me_as_default'] ) ? true : false;
+
+	if ( get_the_ID() === $login_page && $remember_me_as_default === true ) {
+		$settings['value_remember'] = true;
+	}
+
+	return $settings;
+}
+
 // Create a helper function for easy SDK access.
 function buddyforms_clp_fs() {
 	global $buddyforms_clp_fs;
@@ -225,30 +253,31 @@ function buddyforms_clp_fs() {
 		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
 			// Try to load SDK from parent plugin folder.
 			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
-		} else if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
+		} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
 			// Try to load SDK from premium parent plugin folder.
 			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
 		}
 
-
-		$buddyforms_clp_fs = fs_dynamic_init( array(
-			'id'             => '1924',
-			'slug'           => 'buddyforms-custom-login-page',
-			'type'           => 'plugin',
-			'public_key'     => 'pk_9e440e4e95f7a9556ae3c03c4c221',
-			'is_premium'     => false,
-			'has_paid_plans' => false,
-			'parent'         => array(
-				'id'         => '391',
-				'slug'       => 'buddyforms',
-				'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
-				'name'       => 'BuddyForms',
-			),
-			'menu'           => array(
-				'first-path' => 'edit.php?post_type=buddyforms&page=buddyforms_welcome_screen',
-				'support'    => false,
-			),
-		) );
+		$buddyforms_clp_fs = fs_dynamic_init(
+			array(
+				'id'             => '1924',
+				'slug'           => 'buddyforms-custom-login-page',
+				'type'           => 'plugin',
+				'public_key'     => 'pk_9e440e4e95f7a9556ae3c03c4c221',
+				'is_premium'     => false,
+				'has_paid_plans' => false,
+				'parent'         => array(
+					'id'         => '391',
+					'slug'       => 'buddyforms',
+					'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
+					'name'       => 'BuddyForms',
+				),
+				'menu'           => array(
+					'first-path' => 'edit.php?post_type=buddyforms&page=buddyforms_welcome_screen',
+					'support'    => false,
+				),
+			)
+		);
 	}
 
 	return $buddyforms_clp_fs;
@@ -268,8 +297,8 @@ function buddyforms_clp_fs_is_parent_active() {
 	}
 
 	foreach ( $active_plugins as $basename ) {
-		if ( 0 === strpos( $basename, 'buddyforms/' ) ||
-		     0 === strpos( $basename, 'buddyforms-premium/' )
+		if ( 0 === strpos( strtolower( $basename ), 'buddyforms/' ) ||
+			 0 === strpos( strtolower( $basename ), 'buddyforms-premium/' )
 		) {
 			return true;
 		}
@@ -327,14 +356,14 @@ function buddyforms_clp_fs_init() {
 
 		// Parent is active, add your init code here.
 	} else {
-		add_action( 'admin_notices', 'buddyforms_custom_login_need_buddyforms');
+		add_action( 'admin_notices', 'buddyforms_custom_login_need_buddyforms' );
 	}
 }
 
 if ( buddyforms_clp_fs_is_parent_active_and_loaded() ) {
 	// If parent already included, init add-on.
 	buddyforms_clp_fs_init();
-} else if ( buddyforms_clp_fs_is_parent_active() ) {
+} elseif ( buddyforms_clp_fs_is_parent_active() ) {
 	// Init add-on only after the parent is loaded.
 	add_action( 'buddyforms_core_fs_loaded', 'buddyforms_clp_fs_init' );
 } else {

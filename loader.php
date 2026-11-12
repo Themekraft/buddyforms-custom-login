@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version: 1.1.15
  * Requires at least: 5.9
  * Requires PHP: 7.4
+ * Requires Plugins: buddyforms
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/
  * License: GPLv2 or later
@@ -35,6 +36,57 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * ***************************************************************************
  */
+
+if ( ! function_exists( 'buddyforms_addon_plugin_dependencies_slug' ) ) {
+	/**
+	 * Let the running BuddyForms copy (free or premium) satisfy "Requires Plugins: buddyforms".
+	 *
+	 * @param string $slug Dependency slug.
+	 *
+	 * @return string
+	 */
+	function buddyforms_addon_plugin_dependencies_slug( $slug ) {
+		if ( 'buddyforms' === $slug && defined( 'BUDDYFORMS_INSTALL_PATH' ) ) {
+			return basename( BUDDYFORMS_INSTALL_PATH );
+		}
+
+		return $slug;
+	}
+
+	add_filter( 'wp_plugin_dependencies_slug', 'buddyforms_addon_plugin_dependencies_slug' );
+}
+
+/**
+ * Whether BuddyForms (free or premium) is active and in place.
+ *
+ * Read from the active plugin lists because this add-on can load before
+ * BuddyForms, so its functions may not exist yet when this file runs.
+ *
+ * @return bool
+ */
+function buddyforms_custom_login_buddyforms_is_active() {
+	$active_plugins = (array) get_option( 'active_plugins', array() );
+	if ( is_multisite() ) {
+		$active_plugins = array_merge( $active_plugins, array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
+	}
+
+	foreach ( $active_plugins as $basename ) {
+		$folder = strtolower( dirname( $basename ) );
+		if ( ( 'buddyforms' === $folder || 'buddyforms-premium' === $folder ) && file_exists( WP_PLUGIN_DIR . '/' . $basename ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Without BuddyForms the login page would show the raw [bf_login_form] shortcode,
+// and wp-login.php would still redirect to it, so nobody could log in.
+if ( ! buddyforms_custom_login_buddyforms_is_active() ) {
+	add_action( 'admin_notices', 'buddyforms_custom_login_need_buddyforms' );
+
+	return;
+}
 
 // BuddyForms Members init
 add_action( 'init', 'buddyforms_custom_login_init' );

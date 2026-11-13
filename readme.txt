@@ -89,8 +89,7 @@ Head to the 'BuddyForms' menu item in your admin sidebar and go to the Settings 
 > #### Extensive Documentation and Support
 > * All code is neat, clean and well documented (inline as well as in the documentation).
 > * The BuddyForms Documentation with many how-to’s will help you on your way.
-> * Find our Getting Started, How-to and Developer Docs on [docs.buddyforms.com](http://docs.buddyforms.com/)
-> * or watch one of our [Video Tutorials](https://themekraft.com/buddyforms-videos/)
+> * Find our Getting Started, How-to and Developer Docs on [docs.buddyforms.com](https://docs.buddyforms.com/)
 > * If you still get stuck somewhere, our support gets you back on the right track. You can find all help buttons in your BuddyForms Settings Panel in your WP Dashboard and the Help Center!
 
 == Screenshots ==

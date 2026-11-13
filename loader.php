@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Plugin Name: BuddyForms Custom Login Page
- * Plugin URI: https://themekraft.com/products/custom-login/
+ * Plugin Name: BuddyForms Custom Login
+ * Plugin URI: https://themekraft.com/add-on/wordpress-custom-login-page/
  * Description: Select a Custom Login Page
  * Version: 1.1.15
  * Requires at least: 5.9
@@ -393,9 +393,9 @@ function buddyforms_custom_login_need_buddyforms() {
 		}
 	</style>
 	<div class="error buddyforms-notice buddyforms-title">
-		<label class="buddyforms-title">BuddyForms Custom Login Page</label>
+		<label class="buddyforms-title">BuddyForms Custom Login</label>
 		<div class="buddyforms-notice-body">
-			<b>Oops...</b> <a href="https://themekraft.com/products/buddyforms-custom-login/" target="_blank">BuddyForms Custom Login Page</a> cannot run without <a target="_blank" href="https://themekraft.com/buddyforms/">BuddyForms</a>.
+			<b>Oops...</b> <a href="https://themekraft.com/add-on/wordpress-custom-login-page/" target="_blank">BuddyForms Custom Login</a> cannot run without <a target="_blank" href="https://themekraft.com/plugins/buddyforms/">BuddyForms</a>.
 		</div>
 	</div>
 	<?php

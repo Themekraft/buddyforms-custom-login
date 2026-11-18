@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: BuddyForms Custom Login
  * Plugin URI: https://themekraft.com/add-on/wordpress-custom-login-page/
  * Description: Select a Custom Login Page
- * Version: 1.1.15
+ * Version: 1.1.16
  * Requires at least: 5.9
  * Requires PHP: 7.4
  * Requires Plugins: buddyforms

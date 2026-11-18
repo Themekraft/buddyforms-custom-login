@@ -4,7 +4,7 @@ Tags: custom login, login form, restrict content, private network, members only
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.15
+Stable tag: 1.1.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,11 @@ Head to the 'BuddyForms' menu item in your admin sidebar and go to the Settings 
 
 
 == Changelog ==
+= 1.1.16 - 18 Nov 2026 =
+* Fixed the login page when BuddyForms is inactive: it no longer redirects to the custom login page, which could not show the login form. The plugin shows a notice instead.
+* BuddyForms is now declared as a required plugin.
+* The plugin is now called BuddyForms Custom Login everywhere, and broken links in the admin notice and the readme are fixed.
+
 = 1.1.15 - 03 Oct 2026 =
 * Fixed a fatal error on every page with PHP 8 when the plugin settings had never been saved.
 * Escaped the registration link URL.

@@ -5,12 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Plugin Name: BuddyForms Custom Login Page
- * Plugin URI: https://themekraft.com/products/custom-login/
+ * Plugin Name: BuddyForms Custom Login
+ * Plugin URI: https://themekraft.com/add-on/wordpress-custom-login-page/
  * Description: Select a Custom Login Page
- * Version: 1.1.15
+ * Version: 1.1.16
  * Requires at least: 5.9
  * Requires PHP: 7.4
+ * Requires Plugins: buddyforms
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/
  * License: GPLv2 or later
@@ -35,6 +36,57 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * ***************************************************************************
  */
+
+if ( ! function_exists( 'buddyforms_addon_plugin_dependencies_slug' ) ) {
+	/**
+	 * Let the running BuddyForms copy (free or premium) satisfy "Requires Plugins: buddyforms".
+	 *
+	 * @param string $slug Dependency slug.
+	 *
+	 * @return string
+	 */
+	function buddyforms_addon_plugin_dependencies_slug( $slug ) {
+		if ( 'buddyforms' === $slug && defined( 'BUDDYFORMS_INSTALL_PATH' ) ) {
+			return basename( BUDDYFORMS_INSTALL_PATH );
+		}
+
+		return $slug;
+	}
+
+	add_filter( 'wp_plugin_dependencies_slug', 'buddyforms_addon_plugin_dependencies_slug' );
+}
+
+/**
+ * Whether BuddyForms (free or premium) is active and in place.
+ *
+ * Read from the active plugin lists because this add-on can load before
+ * BuddyForms, so its functions may not exist yet when this file runs.
+ *
+ * @return bool
+ */
+function buddyforms_custom_login_buddyforms_is_active() {
+	$active_plugins = (array) get_option( 'active_plugins', array() );
+	if ( is_multisite() ) {
+		$active_plugins = array_merge( $active_plugins, array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
+	}
+
+	foreach ( $active_plugins as $basename ) {
+		$folder = strtolower( dirname( $basename ) );
+		if ( ( 'buddyforms' === $folder || 'buddyforms-premium' === $folder ) && file_exists( WP_PLUGIN_DIR . '/' . $basename ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Without BuddyForms the login page would show the raw [bf_login_form] shortcode,
+// and wp-login.php would still redirect to it, so nobody could log in.
+if ( ! buddyforms_custom_login_buddyforms_is_active() ) {
+	add_action( 'admin_notices', 'buddyforms_custom_login_need_buddyforms' );
+
+	return;
+}
 
 // BuddyForms Members init
 add_action( 'init', 'buddyforms_custom_login_init' );
@@ -248,14 +300,9 @@ function buddyforms_clp_fs() {
 	global $buddyforms_clp_fs;
 
 	if ( ! isset( $buddyforms_clp_fs ) ) {
-		// Include Freemius SDK.
-		// Include Freemius SDK.
-		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
-			// Try to load SDK from parent plugin folder.
-			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
-		} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
-			// Try to load SDK from premium parent plugin folder.
-			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
+		// The Freemius SDK comes with BuddyForms, which loads it before this add-on initializes.
+		if ( ! function_exists( 'fs_dynamic_init' ) ) {
+			return false;
 		}
 
 		$buddyforms_clp_fs = fs_dynamic_init(
@@ -341,9 +388,9 @@ function buddyforms_custom_login_need_buddyforms() {
 		}
 	</style>
 	<div class="error buddyforms-notice buddyforms-title">
-		<label class="buddyforms-title">BuddyForms Custom Login Page</label>
+		<label class="buddyforms-title">BuddyForms Custom Login</label>
 		<div class="buddyforms-notice-body">
-			<b>Oops...</b> <a href="https://themekraft.com/products/buddyforms-custom-login/" target="_blank">BuddyForms Custom Login Page</a> cannot run without <a target="_blank" href="https://themekraft.com/buddyforms/">BuddyForms</a>.
+			<b>Oops...</b> <a href="https://themekraft.com/add-on/wordpress-custom-login-page/" target="_blank">BuddyForms Custom Login</a> cannot run without <a target="_blank" href="https://themekraft.com/plugins/buddyforms/">BuddyForms</a>.
 		</div>
 	</div>
 	<?php

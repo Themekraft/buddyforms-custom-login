@@ -97,7 +97,7 @@ function buddyforms_custom_login_init() {
 add_filter( 'buddyforms_login_form_redirect_url', 'buddyforms_custom_login_redirect_url', 10, 1 );
 function buddyforms_custom_login_redirect_url( $redirect ) {
 	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
-	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) && $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
+	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) || $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? '' : $custom_login_settings['display_login_form'];
 	$caller                = ! empty( $_REQUEST['caller'] ) ? sanitize_key( $_REQUEST['caller'] ) : '';
 	$caller_redirect       = empty( $caller ) || $caller === 'direct';

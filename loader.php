@@ -135,7 +135,9 @@ function buddyforms_custom_login_page() {
 
 	if ( array_key_exists( 'use_custom_redirect_url', $custom_login_settings ) ) {
 		if ( $redirect_logged_off_user == 'Yes' && ! empty( $custom_login_settings['set_custom_redirect_url'] ) ) {
-			$new_login_page_url = $custom_login_settings['set_custom_redirect_url'];
+			// Another host only works when the site allows it with the allowed_redirect_hosts filter;
+			// otherwise visitors go to the login page.
+			$new_login_page_url = wp_validate_redirect( $custom_login_settings['set_custom_redirect_url'], $new_login_page_url );
 		}
 	}
 
@@ -177,14 +179,14 @@ function buddyforms_custom_login_page() {
 		if ( $pagenow == 'wp-login.php' && isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 			if ( ! ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' || isset( $_GET['action'] ) && $_GET['action'] == 'rp' ) ) {
 				if ( ! ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] == 'confirm' ) ) {
-					wp_redirect( $new_login_page_url );
+					wp_safe_redirect( $new_login_page_url );
 					exit;
 				}
 			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		wp_redirect( $new_login_page_url );
+		wp_safe_redirect( $new_login_page_url );
 		exit;
 	}
 

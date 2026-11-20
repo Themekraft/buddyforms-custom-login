@@ -8,81 +8,58 @@ Stable tag: 1.1.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Custom Login, Custom Login Redirect, Custom Registartion Link, Registation Forms
+Replace the WordPress login with any page, set where users go after login, and make your site members-only. An add-on for BuddyForms.
 
 == Description ==
 
-Create a fully customized login and registration experience for your WordPress website. Seamlessly integrates with BuddyPress. Ritch Features to enhance your user login and registration processes. 
+BuddyForms Custom Login replaces the default WordPress login with any page you choose, lets you set the registration link and where users go after they log in, and can make your whole site members-only. It is an add-on for BuddyForms.
 
-Restrict content on your website. With this plugin, you can turn your website into a private network, accessible only to registered members. Customize the login and registration forms to match your site's branding. You have full control over the login url, the login redirect and the registartion form.
+This add-on needs the BuddyForms plugin. The free version of BuddyForms is enough.
 
-== Key Features ==
-- **Custom Login Form**: Create a personalized login form that matches your website's design and branding.
-- **Restrict Content**: Choose which pages, posts, or custom post types should be accessible to the public and make the rest members only.
-- **Private Network**: Transform your WordPress site into a private network by restricting access to non-registered users.
-- **Members Only**: Ensure that your content is exclusive to registered members, providing them with a unique user experience.
+= What it does =
 
-##Seamless integration with BuddyPress
-Seamless integration with BuddyPress Use this plugin to create a custom BuddyPress Login
+* Replace the default WordPress login with any page, shown in place of the page content, above it or below it
+* Set the registration link to any page
+* Choose the page users go to after they log in
+* Make your site or network members-only: send logged-out visitors to the login page or a custom URL, and choose which pages and post types stay public
+* Use the login form anywhere with a block or a shortcode
 
-###Create a Intranet with BuddyPress and Buddyforms 
-##Restrict the site access and create a private community
-#Restrict your site and network and enable acces to individuell pages or complete post types.
-#Redirect logged off users to a login and create a private site or network
-#Select public Accessible Pages
-#Select public Accessible Post Types
+= Shortcode =
 
+Use [bf_login_form] anywhere. All options are optional:
 
-##Overwrite the default WordPress Login
-Select the page you want to use for the global Login and define how to display the Login
- a) overwrite the page content
- b) Above the content
- c) Under the content
+* redirect_url: where to send users after a successful login
+* title: the heading, Login by default
+* label_username: Username or Email Address by default
+* label_password: Password by default
+* label_remember: Remember Me by default
+* label_log_in: Log In by default
 
-#Use the Login Block
-Its Gutenberg ready and can be used in any Gutenberg Editor as Login Block. Create Custom Logins with a Block
-
-#Use the Shortcodes everywhere
-
-[bf_login_form]
-
-##Options:
-redirect_url  --> is optional
-After successful login, redirect to the given URL 
-
-##Label options
-title --> is optional | default values: Login 
-label_username --> is optional | default values: Username or Email Address 
-label_password --> is optional | default values: Password 
-label_remember --> is optional | default values: Remember Me 
-label_log_in --> is optional | default values: Log In 
-Examples
-
-[bf_login_form redirect_url="/test-shortcodes"]
-
-##Display Registration Link?
-Select a registration page to rewrite the registration Link
-
-##Redirect after Login
-Select a page you like to use for the redirect.
-redirect to the user profile or any custom URL
+Example: [bf_login_form redirect_url="/welcome"]
 
 == Frequently Asked Questions ==
-Q: Can I customize the appearance of the login form?
-A: Yes, BuddyForms Custom Login allows you to style the login form to match your website's design and branding.
 
-Q: Can I restrict specific content to registered members only?
-A: Absolutely! You have full control over which pages, posts, or custom post types should be restricted to registered users.
+= Do I need BuddyForms? =
 
-Q: Is it possible to create a private network with this plugin?
-A: Yes, BuddyForms Custom Login enables you to transform your WordPress site into a private network by limiting access to non-registered users.
+Yes. This add-on needs the BuddyForms plugin. The free version of BuddyForms is enough.
 
+= Can I customize the appearance of the login form? =
+
+Yes. The login form is shown on a page of your site, so it follows your theme's design, and you can change its title and labels with the block or shortcode options.
+
+= Can I restrict specific content to registered members only? =
+
+Yes. Make the whole site members-only, then choose which pages and post types stay public.
+
+= Is it possible to create a private network with this plugin? =
+
+Yes. BuddyForms Custom Login lets you turn your WordPress site into a private network by limiting access to people who are not registered.
 
 == Installation ==
 
-Upload the entire plugin folder to the /wp-content/plugins/ directory or install the plugin through the WordPress plugins screen directly.
-Activate the plugin through the 'Plugins' menu in WordPress.
-Head to the 'BuddyForms' menu item in your admin sidebar and go to the Settings Page
+1. Install and activate BuddyForms.
+2. Install this add-on from Plugins > Add New, or upload its folder to /wp-content/plugins/, and activate it.
+3. Go to BuddyForms > Settings > Custom Login.
 
 == Documentation & Support ==
 
@@ -94,8 +71,10 @@ Head to the 'BuddyForms' menu item in your admin sidebar and go to the Settings 
 
 == Screenshots ==
 
-1. **Settings Page** - Settings Page in the Admin under BuddyForms/ Settings/ Custom Login
-2. **Login Form in the Frontend
+1. Settings page: BuddyForms > Settings > Custom Login
+2. Choose which pages and post types stay public on a members-only site
+3. Option to redirect logged-out visitors to the login page and make the site or network private
+4. The login form on the front end
 
 
 == Changelog ==

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: BuddyForms Custom Login
  * Plugin URI: https://themekraft.com/add-on/wordpress-custom-login-page/
  * Description: Select a Custom Login Page
- * Version: 1.1.16
+ * Version: 1.1.17-beta.1
  * Requires at least: 5.9
  * Requires PHP: 7.4
  * Requires Plugins: buddyforms
@@ -97,7 +97,7 @@ function buddyforms_custom_login_init() {
 add_filter( 'buddyforms_login_form_redirect_url', 'buddyforms_custom_login_redirect_url', 10, 1 );
 function buddyforms_custom_login_redirect_url( $redirect ) {
 	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
-	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) && $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
+	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) || $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? '' : $custom_login_settings['display_login_form'];
 	$caller                = ! empty( $_REQUEST['caller'] ) ? sanitize_key( $_REQUEST['caller'] ) : '';
 	$caller_redirect       = empty( $caller ) || $caller === 'direct';

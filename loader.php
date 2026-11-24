@@ -99,6 +99,7 @@ function buddyforms_custom_login_redirect_url( $redirect ) {
 	$custom_login_settings = (array) get_option( 'buddyforms_custom_login_settings', array() );
 	$redirect_page         = empty( $custom_login_settings['redirect_page'] ) || $custom_login_settings['redirect_page'] === 'default' ? '' : $custom_login_settings['redirect_page'];
 	$display_login_form    = empty( $custom_login_settings['display_login_form'] ) ? '' : $custom_login_settings['display_login_form'];
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only caller, only picks the redirect target, no state change.
 	$caller                = ! empty( $_REQUEST['caller'] ) ? sanitize_key( $_REQUEST['caller'] ) : '';
 	$caller_redirect       = empty( $caller ) || $caller === 'direct';
 	if ( ! empty( $redirect_page ) && ! empty( $display_login_form ) && $caller_redirect ) {
@@ -134,7 +135,9 @@ function buddyforms_custom_login_page() {
 
 	if ( array_key_exists( 'use_custom_redirect_url', $custom_login_settings ) ) {
 		if ( $redirect_logged_off_user == 'Yes' && ! empty( $custom_login_settings['set_custom_redirect_url'] ) ) {
-			$new_login_page_url = $custom_login_settings['set_custom_redirect_url'];
+			// Another host only works when the site allows it with the allowed_redirect_hosts filter;
+			// otherwise visitors go to the login page.
+			$new_login_page_url = wp_validate_redirect( $custom_login_settings['set_custom_redirect_url'], $new_login_page_url );
 		}
 	}
 
@@ -172,16 +175,18 @@ function buddyforms_custom_login_page() {
 			return;
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only wp-login.php action/checkemail, only decide whether to redirect.
 		if ( $pagenow == 'wp-login.php' && isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 			if ( ! ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' || isset( $_GET['action'] ) && $_GET['action'] == 'rp' ) ) {
 				if ( ! ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] == 'confirm' ) ) {
-					wp_redirect( $new_login_page_url );
+					wp_safe_redirect( $new_login_page_url );
 					exit;
 				}
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		wp_redirect( $new_login_page_url );
+		wp_safe_redirect( $new_login_page_url );
 		exit;
 	}
 
@@ -200,6 +205,7 @@ function buddyforms_custom_login_page_init() {
 		$new_login_page_url = get_permalink( $login_page );
 	}
 
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only wp-login.php action/checkemail, only decide whether to redirect.
 	if ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
 		return;
 	}
@@ -216,11 +222,12 @@ function buddyforms_custom_login_page_init() {
 	if ( $pagenow == 'wp-login.php' && isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 		if ( ! ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' || isset( $_GET['action'] ) && $_GET['action'] == 'rp' ) ) {
 			if ( ! ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] == 'confirm' ) ) {
-				wp_redirect( $new_login_page_url );
+				wp_safe_redirect( $new_login_page_url );
 				exit;
 			}
 		}
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 
 
